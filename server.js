@@ -41,13 +41,11 @@ app.post('/api/shorturl', (req, res) => {
   try {
     urlObject = new URL(inputUrl);
   } catch (err) {
-    console.log('caught err');
     res.json({ error: 'invalid url' });
   }
-  if (urlObject) {
+  if (urlObject.protocol === 'http:' || urlObject.protocol === 'https:') {
     dns.lookup(urlObject.hostname, (err) => {
       if (err) {
-        console.log('lookup err');
         res.json({ error: 'invalid url', original_url: urlObject.hostname });
       } else {
         urlObj.original_url = inputUrl;
@@ -73,6 +71,8 @@ app.post('/api/shorturl', (req, res) => {
           });
       }
     });
+  } else {
+    res.json({ error: 'invalid url' });
   }
 });
 app.get('/api/shorturl/:input', (req, res) => {
